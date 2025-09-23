@@ -1,4 +1,4 @@
-library intl_mobile_field;
+library;
 
 import 'dart:async';
 
@@ -11,314 +11,75 @@ import 'package:intl_mobile_field/helpers.dart';
 import 'package:intl_mobile_field/mobile_number.dart';
 
 class IntlMobileField extends StatefulWidget {
-  /// The TextFormField key.
   final GlobalKey<FormFieldState>? formFieldKey;
-
-  /// Border for the input
   final InputBorder? border;
-
-  /// Prefix Dropdown Constraints
   final BoxConstraints? prefixIconConstraints;
-
-  /// Text Form Field fill Color
   final Color? fillColor;
-
-  /// Whether to hide the text being edited (e.g., for passwords).
   final bool obscureText;
-
-  /// How the text should be aligned horizontally.
   final TextAlign textAlign;
-
-  /// How the text should be aligned vertically.
   final TextAlignVertical? textAlignVertical;
-
-  /// Creates a [FormField] that contains a [TextField].
-
-  /// onTap is called when the user taps on the text field.
   final VoidCallback? onTap;
-
-  /// {@macro flutter.widgets.editableText.readOnly}
   final bool readOnly;
-
   final FormFieldSetter<MobileNumber>? onSaved;
-
-  /// {@macro flutter.widgets.editableText.onChanged}
-  ///
-  /// See also:
-  ///
-  ///  * [inputFormatters], which are called before [onChanged]
-  ///    runs and can validate and change ("format") the input value.
-  ///  * [onEditingComplete], [onSubmitted], [onSelectionChanged]:
-  ///    which are more specialized input change notifications.
   final ValueChanged<MobileNumber>? onChanged;
-
-  /// An optional method that validates an input. Returns an error string to display if the input is invalid, or null otherwise.
-  ///
-  /// A [MobileNumber] is passed to the validator as argument.
-  /// The validator can handle asynchronous validation when declared as a [Future].
-  /// Or run synchronously when declared as a [Function].
-  ///
-  /// By default, the validator checks whether the input number length is between selected country's mobile numbers min and max length.
-  /// If `disableLengthCheck` is not set to `true`, your validator returned value will be overwritten by the default validator.
-  /// But, if `disableLengthCheck` is set to `true`, your validator will have to check mobile number length itself.
   final FutureOr<String?> Function(MobileNumber?)? validator;
-
-  /// {@macro flutter.widgets.editableText.keyboardType}
   final TextInputType keyboardType;
-
-  /// Controls the text being edited.
-  ///
-  /// If null, this widget will create its own [TextEditingController].
   final TextEditingController? controller;
-
-  /// Defines the keyboard focus for this widget.
-  ///
-  /// The [focusNode] is a long-lived object that's typically managed by a
-  /// [StatefulWidget] parent. See [FocusNode] for more information.
-  ///
-  /// To give the keyboard focus to this widget, provide a [focusNode] and then
-  /// use the current [FocusScope] to request the focus:
-  ///
-  /// ```dart
-  /// FocusScope.of(context).requestFocus(myFocusNode);
-  /// ```
-  ///
-  /// This happens automatically when the widget is tapped.
-  ///
-  /// To be notified when the widget gains or loses the focus, add a listener
-  /// to the [focusNode]:
-  ///
-  /// ```dart
-  /// focusNode.addListener(() { print(myFocusNode.hasFocus); });
-  /// ```
-  ///
-  /// If null, this widget will create its own [FocusNode].
-  ///
-  /// ## Keyboard
-  ///
-  /// Requesting the focus will typically cause the keyboard to be shown
-  /// if it's not showing already.
-  ///
-  /// On Android, the user can hide the keyboard - without changing the focus -
-  /// with the system back button. They can restore the keyboard's visibility
-  /// by tapping on a text field.  The user might hide the keyboard and
-  /// switch to a physical keyboard, or they might just need to get it
-  /// out of the way for a moment, to expose something it's
-  /// obscuring. In this case requesting the focus again will not
-  /// cause the focus to change, and will not make the keyboard visible.
-  ///
-  /// This widget builds an [EditableText] and will ensure that the keyboard is
-  /// showing when it is tapped by calling [EditableTextState.requestKeyboard()].
   final FocusNode? focusNode;
-
-  /// {@macro flutter.widgets.editableText.onSubmitted}
-  ///
-  /// See also:
-  ///
-  ///  * [EditableText.onSubmitted] for an example of how to handle moving to
-  ///    the next/previous field when using [TextInputAction.next] and
-  ///    [TextInputAction.previous] for [textInputAction].
   final void Function(String)? onSubmitted;
-
-  /// If false the widget is "disabled": it ignores taps, the [TextFormField]'s
-  /// [decoration] is rendered in grey,
-  /// [decoration]'s [InputDecoration.counterText] is set to `""`,
-  /// and the drop down icon is hidden no matter [showDropdownIcon] value.
-  ///
-  /// If non-null this property overrides the [decoration]'s
-  /// [Decoration.enabled] property.
   final bool enabled;
-
-  /// The appearance of the keyboard.
-  ///
-  /// This setting is only honored on iOS devices.
-  ///
-  /// If unset, defaults to the brightness of [ThemeData.brightness].
   final Brightness? keyboardAppearance;
-
-  /// Initial Value for the field.
-  /// This property can be used to pre-fill the field.
   final String? initialValue;
-
-  /// List of Country to display see countries.dart for format
   final List<String>? countries;
-
-  /// The decoration to show around the text field.
-  ///
-  /// By default, draws a horizontal line under the text field but can be
-  /// configured to show an icon, label, hint text, and error text.
-  ///
-  /// Specify null to remove the decoration entirely (including the
-  /// extra padding introduced by the decoration to save space for the labels).
   final InputDecoration decoration;
-
-  /// The style to use for the text being edited.
-  ///
-  /// This text style is also used as the base style for the [decoration].
-  ///
-  /// If null, defaults to the `subtitle1` text style from the current [Theme].
   final TextStyle? style;
-
-  /// Disable view Min/Max Length check
   final bool disableLengthCheck;
-
-  /// Disable view Min/Max Length check
   final bool disableLengthCounter;
-
-  /// {@macro flutter.widgets.editableText.inputFormatters}
   final List<TextInputFormatter>? inputFormatters;
-
-  /// Whether this text field should focus itself if nothing else is already focused.
   final bool autoFocus;
-
-  /// Autovalidate mode for text form field.
-  ///
-  /// If [AutovalidateMode.onUserInteraction], this FormField will only auto-validate after its content changes.
-  /// If [AutovalidateMode.always], it will auto-validate even without user interaction.
-  /// If [AutovalidateMode.disabled], auto-validation will be disabled.
-  ///
-  /// Defaults to [AutovalidateMode.onUserInteraction].
   final AutovalidateMode? autovalidateMode;
-
-  /// Message to be displayed on autoValidate error
-  ///
-  /// Default value is `Invalid Mobile Number`.
   final String? invalidNumberMessage;
-
-  /// The color of the cursor.
   final Color? cursorColor;
-
-  /// How tall the cursor will be.
   final double? cursorHeight;
-
-  /// How rounded the corners of the cursor should be.
   final Radius? cursorRadius;
-
-  /// How thick the cursor will be.
   final double cursorWidth;
-
-  /// Whether to show cursor.
   final bool? showCursor;
-
-  /// The type of action button to use for the keyboard.
   final TextInputAction? textInputAction;
-
-  /// Enable the autofill hint for mobile number.
   final bool disableAutoFillHints;
-
-  /// If null, default magnification configuration will be used.
   final TextMagnifierConfiguration? magnifierConfiguration;
-
-  /// When this widget receives focus and is not completely visible (for example scrolled partially
-  /// off the screen or overlapped by the keyboard)
-  /// then it will attempt to make itself visible by scrolling a surrounding [Scrollable], if one is present.
-  /// This value controls how far from the edges of a [Scrollable] the TextField will be positioned after the scroll.
   final EdgeInsets scrollPadding;
-
-  /// [expands] If set to true and wrapped in a parent widget like Expanded or SizedBox,
-  /// the input will expand to fill the parent.
   final bool expands;
-
-  /// define how many lines that you need for the IntlPhoneField (by default set by 1)
   final int? maxLines;
-
-  /// when they tap outside of the text field. By default, this callback unfocused the text field, meaning it will lose focus when the user taps outside, which can help users exit the field more easily.
   final TapRegionCallback? onTapOutside;
-
-  /// in suffixIcon you can use any widget.
   final Widget? suffixIcon;
-
   final ValueKey? flagsButtonKey;
-
-  /// Won't work if [enabled] is set to `false`.
   final bool showDropdownIcon;
-
-  /// disable country choses by user
   final bool disableFlagTap;
-
-  /// 2 letter ISO Code or country dial code.
-  ///
-  /// ```dart
-  /// initialCountryCode: 'BD', // Bangladesh
-  /// ```
   final String? initialCountryCode;
-
-  /// Icon of the drop down button.
-  ///
-  /// Default is [Icon(Icons.arrow_drop_down)]
   final Widget dropdownIcon;
   final Position dropdownIconPosition;
-
-  /// Whether to show or hide country flag.
-  ///
-  /// Default value is `true`.
   final bool showDialogCountryFlag;
   final BoxDecoration dropdownDecoration;
-
-  /// The padding of the Flags Button.
-  ///
-  /// The amount of insets that are applied to the Flags Button.
-  ///
-  /// If unset, defaults to [EdgeInsets.zero].
   final EdgeInsetsGeometry flagsButtonPadding;
-
-  /// The margin of the country selector button.
-  ///
-  /// The amount of space to surround the country selector button.
-  ///
-  /// If unset, defaults to [EdgeInsets.zero].
   final EdgeInsets flagsButtonMargin;
-
-  /// The width of the country flag.
   final double? flagWidth;
-
-  /// The style use for the country dial code.
   final TextStyle? dropdownTextStyle;
-
-  /// added favorite countries to the top of the list
   final List<String> favorite;
-
-  /// Use LanguageCode for Localization Country List.
   final String? languageCode;
-
-  /// Enable or disable the Favorite Icon for the Favorite Country Lists.
   final bool? enableFavoriteIcon;
-
-  /// Whether the favorite icon is left or right aligned.
   final Position favoriteIconPosition;
-
-  /// The icon to be displayed when favorite country list is Created.
   final Widget? favoriteIcon;
-
-  /// RLT Support for Localization
   final bool? rltSupport;
-
-  /// Optional set of styles to allow for customizing the country search
-  /// & pick dialog
   final PickerDialogStyle? pickerDialogStyle;
-
-  /// The position of the favorite icon in the country picker dialog.
   final Position favoriteCountryCodePosition;
-
-  /// The position of the country code in the country picker dialog.
   final Position dialogCountryCodePosition;
-
-  /// The position of the country code in the flags button.
   final Position fieldCountryCodePosition;
-
   final ValueChanged<Country>? onCountryChanged;
-
-  /// Disable country code.
   final bool countryCodeDisable;
-
-  /// Disable country flag in TextField.
   final bool showFieldCountryFlag;
-
-  /// CountryPicker DialogBox Height
   final double? countryPickerDialogBoxHeight;
-
-  /// add a Style to the length Counter
   final TextStyle? lengthCounterTextStyle;
+  final MobileNumber? initialMobileNumber;
 
   const IntlMobileField({
     super.key,
@@ -390,6 +151,7 @@ class IntlMobileField extends StatefulWidget {
     this.showFieldCountryFlag = true,
     this.countryPickerDialogBoxHeight,
     this.lengthCounterTextStyle,
+    this.initialMobileNumber,
   });
 
   @override
@@ -405,9 +167,10 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
   String initial = "";
 
   Timer? _debounceTimer;
-
+  // unchanged
   String get _selectedCountryDialCode => '+${_selectedCountry.fullCountryCode}';
 
+  // unchanged
   MobileNumber _buildMobileNumber(String? number) {
     return MobileNumber(
       countryISOCode: _selectedCountry.code,
@@ -420,58 +183,89 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
   void initState() {
     super.initState();
 
-    if (widget.countries != null && widget.countries!.isNotEmpty) {
-      countryList = countries
-          .where((c) =>
-              widget.countries!.contains(c.code.toUpperCase()) ||
-              widget.countries!.contains(c.dialCode))
-          .toList();
-    } else {
-      countryList = countries;
-    }
+    // Build from attached countries list; keep your filtering behavior
+    countryList = (widget.countries == null || widget.countries!.isEmpty)
+        ? countries
+        : countries.where((c) {
+            final allow = widget.countries!;
+            return allow.contains(c.code) || allow.contains(c.dialCode);
+          }).toList(); // uses attached countries and Country model
 
-    final initialText = widget.controller?.text ?? widget.initialValue ?? '';
-    final detectedCountry = _getInitialCountry(initialText);
+    // Always resolve from initialCountryCode or fallback, do not infer from controller text
+    _selectedCountry = _resolveInitialCountry(widget.initialCountryCode);
 
-    if (initialText.isNotEmpty &&
-        detectedCountry.code.toUpperCase() !=
-            (widget.initialCountryCode?.toUpperCase() ?? '')) {
-      // Case: Detected country from initial text
-      _selectedCountry = detectedCountry;
-    } else {
-      // Fallback: use initialCountryCode or 'BD'
-      final fallbackCode = widget.initialCountryCode ?? 'BD';
+    if (widget.initialMobileNumber != null) {
+      final mobile = widget.initialMobileNumber!;
       _selectedCountry = countryList.firstWhere(
-        (country) => country.code.toUpperCase() == fallbackCode.toUpperCase(),
-        orElse: () => countryList.first,
+        (c) =>
+            c.code.toUpperCase() == mobile.countryISOCode.toUpperCase() ||
+            c.dialCode == mobile.countryCode.replaceAll('+', ''),
+        orElse: () => _selectedCountry,
       );
-    }
-
-    widget.controller?.addListener(_handleControllerChange);
-    _updateFromInitialValue();
-
-    number = _stripCountryCode(
-      widget.controller?.text ?? widget.initialValue ?? '',
-      _selectedCountry,
-    );
-
-    if (widget.controller != null) {
-      widget.controller!.text = number;
-    }
-
-    if (widget.autovalidateMode == AutovalidateMode.always) {
-      _validateAsync(_buildMobileNumber(number));
+      number = mobile.number;
+      if (widget.controller != null) {
+        widget.controller!.text = number;
+      }
+    } else {
+      final initialText = widget.controller?.text ?? widget.initialValue ?? '';
+      widget.controller?.addListener(_handleControllerChange);
+      number = _stripCountryCode(initialText, _selectedCountry);
+      if (widget.controller != null) {
+        widget.controller!.text = number;
+      }
+      if (widget.autovalidateMode == AutovalidateMode.always) {
+        _validateAsync(_buildMobileNumber(number)); // will be gated by length
+      }
     }
   }
 
-  void _updateFromInitialValue() {
-    final initial = widget.controller?.text ?? widget.initialValue ?? '';
-    if (initial.isNotEmpty) {
-      number = _stripCountryCode(initial, _selectedCountry);
-      if (widget.controller != null && widget.controller!.text != number) {
-        widget.controller!.text = number;
+  Country _resolveInitialCountry(String? initialCountryCode) {
+    if (initialCountryCode != null && initialCountryCode.isNotEmpty) {
+      final code = initialCountryCode.toUpperCase();
+      final byIso = countryList.where((c) => c.code.toUpperCase() == code);
+      if (byIso.isNotEmpty) return byIso.first;
+      final byDial = countryList.where((c) => c.dialCode == code);
+      if (byDial.isNotEmpty) return byDial.first;
+    }
+    return countryList.firstWhere(
+      (c) => c.code.toUpperCase() == 'BD',
+      orElse: () => countryList.first,
+    ); // BD exists in attached data
+  }
+
+  Country _getInitialCountry(String number) {
+    final cleanNumber = number.replaceAll(RegExp(r'[^+0-9]'), '');
+    if (cleanNumber.startsWith('+')) {
+      final withoutPlus = cleanNumber.substring(1);
+      for (final country in countryList) {
+        final fullCode = country.dialCode + (country.regionCode ?? '');
+        if (fullCode.isNotEmpty && withoutPlus.startsWith(fullCode)) {
+          return country;
+        }
+      }
+      for (final country in countryList) {
+        if (withoutPlus.startsWith(country.dialCode)) {
+          return country;
+        }
       }
     }
+    return _resolveInitialCountry(widget.initialCountryCode);
+  }
+
+  String _stripCountryCode(String input, Country country) {
+    if (input.isEmpty) return '';
+    final clean = input.replaceAll(RegExp(r'[^+0-9]'), '');
+    if (clean.startsWith('+')) {
+      final withoutPlus = clean.substring(1);
+      if (withoutPlus.startsWith(country.fullCountryCode)) {
+        return withoutPlus.substring(country.fullCountryCode.length);
+      }
+      if (withoutPlus.startsWith(country.dialCode)) {
+        return withoutPlus.substring(country.dialCode.length);
+      }
+      return withoutPlus;
+    }
+    return clean; // keep digits only
   }
 
   void _handleControllerChange() {
@@ -480,32 +274,23 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
     final rawText = widget.controller?.text ?? '';
     final cleanText = rawText.replaceAll(RegExp(r'[^+0-9]'), '');
 
-    // CASE 1: Text is empty → reset to default country
     if (cleanText.isEmpty) {
-      final fallbackCode = widget.initialCountryCode ?? 'BD';
-      final defaultCountry = countryList.firstWhere(
-        (country) => country.code.toUpperCase() == fallbackCode.toUpperCase(),
-        orElse: () => countryList.first,
-      );
-
+      final defaultCountry = _resolveInitialCountry(widget.initialCountryCode);
       if (_selectedCountry.code != defaultCountry.code) {
         setState(() {
           _selectedCountry = defaultCountry;
         });
         widget.onCountryChanged?.call(defaultCountry);
       }
-
       setState(() => number = '');
       widget.onChanged?.call(_buildMobileNumber(''));
       return;
     }
 
-    // CASE 2: Starts with '+' → Try detecting new country
     if (cleanText.startsWith('+')) {
       final newCountry = _getInitialCountry(cleanText);
       final stripped = _stripCountryCode(cleanText, newCountry);
 
-      // Update country if changed
       if (newCountry.code != _selectedCountry.code) {
         setState(() {
           _selectedCountry = newCountry;
@@ -513,13 +298,10 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
         widget.onCountryChanged?.call(newCountry);
       }
 
-      // CASE 4: Full number is entered → strip country code from controller
       final isComplete = stripped.length >= newCountry.maxLength;
       if (isComplete) {
-        // Update controller to contain only number (without +code)
         final cursorPosition = widget.controller!.selection.baseOffset -
             (cleanText.length - stripped.length);
-
         WidgetsBinding.instance.addPostFrameCallback((_) {
           widget.controller?.text = stripped;
           widget.controller?.selection = TextSelection.collapsed(
@@ -533,58 +315,9 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
       return;
     }
 
-    // CASE 3: Normal editing — preserve current country
     final stripped = _stripCountryCode(cleanText, _selectedCountry);
     setState(() => number = stripped);
     widget.onChanged?.call(_buildMobileNumber(stripped));
-  }
-
-  Country _getInitialCountry(String number) {
-    // Clean the number first
-    final cleanNumber = number.replaceAll(RegExp(r'[^+0-9]'), '');
-
-    if (cleanNumber.startsWith('+')) {
-      final withoutPlus = cleanNumber.substring(1);
-
-      // Try exact match (dialCode + regionCode)
-      for (final country in countryList) {
-        final fullCode = country.dialCode + country.regionCode;
-        if (withoutPlus.startsWith(fullCode)) {
-          return country;
-        }
-      }
-
-      // Fallback to just dialCode match
-      for (final country in countryList) {
-        if (withoutPlus.startsWith(country.dialCode)) {
-          return country;
-        }
-      }
-    }
-
-    // Final fallback to BD or first country
-    return countryList.firstWhere(
-      (c) => c.code == 'BD',
-      orElse: () => countryList.first,
-    );
-  }
-
-  String _stripCountryCode(String number, Country country) {
-    if (number.isEmpty) return '';
-
-    final cleanNumber = number.replaceAll(RegExp(r'[^+0-9]'), '');
-
-    if (cleanNumber.startsWith('+')) {
-      final withoutPlus = cleanNumber.substring(1);
-
-      if (withoutPlus.startsWith(country.fullCountryCode)) {
-        return withoutPlus.substring(country.fullCountryCode.length);
-      } else if (withoutPlus.startsWith(country.dialCode)) {
-        return withoutPlus.substring(country.dialCode.length);
-      }
-    }
-
-    return cleanNumber;
   }
 
   void _onChanged(String value) {
@@ -593,15 +326,13 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
 
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      _validateAsync(mobileNumber);
+      _validateAsync(mobileNumber); // now guarded by length and try/catch
     });
   }
 
   String? _validateSync(MobileNumber mobileNumber) {
     final value = mobileNumber.number;
-
     if (value.isEmpty) return null;
-
     if (!isNumeric(value)) return widget.invalidNumberMessage;
 
     if (!widget.disableLengthCheck) {
@@ -609,20 +340,39 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
           value.length <= _selectedCountry.maxLength;
       if (!isValidLength) return widget.invalidNumberMessage;
     }
-
-    return null;
+    return null; // sync passes, async may still run later
   }
 
   Future<void> _validateAsync(MobileNumber mobileNumber) async {
     if (widget.validator == null) return;
 
+    // Guard: do not call async validator until minimum length is reached
+    final localLen = mobileNumber.number.length;
+    if (localLen < _selectedCountry.minLength) {
+      // Clear async message while typing short input
+      if (asyncValidationMessage != null || isValidating) {
+        setState(() {
+          asyncValidationMessage = null;
+          isValidating = false;
+        });
+      }
+      return;
+    } // prevents NumberTooShortException while typing
+
     setState(() => isValidating = true);
-
-    final result = await widget.validator!.call(mobileNumber);
-
-    if (mounted) {
+    try {
+      final result = await widget.validator!.call(mobileNumber);
+      if (!mounted) return;
       setState(() {
         asyncValidationMessage = result;
+        isValidating = false;
+      });
+    } catch (e) {
+      // Swallow length-related exceptions and generic errors during typing
+      if (!mounted) return;
+      setState(() {
+        // Do not surface an error message for transient typing states
+        asyncValidationMessage = null;
         isValidating = false;
       });
     }
@@ -639,6 +389,7 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
   Widget build(BuildContext context) {
     final fullText = widget.controller?.text ?? widget.initialValue ?? '';
     final hasCodeInText = fullText.startsWith(_selectedCountryDialCode);
+
     return TextFormField(
       key: widget.formFieldKey,
       initialValue: widget.controller == null ? number : null,
@@ -708,9 +459,7 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
         suffixIcon: widget.suffixIcon,
       ),
       style: widget.style,
-      onSaved: (value) {
-        widget.onSaved?.call(_buildMobileNumber(value));
-      },
+      onSaved: (value) => widget.onSaved?.call(_buildMobileNumber(value)),
       onChanged: _onChanged,
       validator: (value) {
         final mobileNumber = _buildMobileNumber(value);
@@ -727,7 +476,6 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
               setState(() => asyncValidationMessage = msg);
             }
           });
-
           return widget.invalidNumberMessage;
         }
 
@@ -750,10 +498,8 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
       scrollPadding: widget.scrollPadding,
       buildCounter: (BuildContext context,
           {int? currentLength, int? maxLength, bool? isFocused}) {
-        final fullText = widget.controller?.text ?? widget.initialValue ?? '';
-        final numberLength =
-            _stripCountryCode(fullText, _selectedCountry).length;
-
+        final ft = widget.controller?.text ?? widget.initialValue ?? '';
+        final numberLength = _stripCountryCode(ft, _selectedCountry).length;
         final maxNumberLength =
             widget.disableLengthCounter ? 0 : _selectedCountry.maxLength;
 
