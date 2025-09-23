@@ -51,11 +51,11 @@ class MobileNumber {
   bool isValidNumber() {
     Country country = getCountry(completeNumber);
     if (number.length < country.minLength) {
-      throw NumberTooShortException();
+      return false;
     }
 
     if (number.length > country.maxLength) {
-      throw NumberTooLongException();
+      return false;
     }
     return true;
   }
