@@ -2,13 +2,13 @@ library;
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl_mobile_field/countries.dart';
 import 'package:intl_mobile_field/country_picker_dialog.dart';
 import 'package:intl_mobile_field/flags_drop_down.dart';
 import 'package:intl_mobile_field/helpers.dart';
 import 'package:intl_mobile_field/mobile_number.dart';
+import 'package:material_ui/material_ui.dart';
 
 class IntlMobileField extends StatefulWidget {
   final GlobalKey<FormFieldState>? formFieldKey;
@@ -238,7 +238,7 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
     if (cleanNumber.startsWith('+')) {
       final withoutPlus = cleanNumber.substring(1);
       for (final country in countryList) {
-        final fullCode = country.dialCode + (country.regionCode ?? '');
+        final fullCode = country.dialCode + (country.regionCode);
         if (fullCode.isNotEmpty && withoutPlus.startsWith(fullCode)) {
           return country;
         }
@@ -300,7 +300,8 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
 
       final isComplete = stripped.length >= newCountry.maxLength;
       if (isComplete) {
-        final cursorPosition = widget.controller!.selection.baseOffset -
+        final cursorPosition =
+            widget.controller!.selection.baseOffset -
             (cleanText.length - stripped.length);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           widget.controller?.text = stripped;
@@ -336,7 +337,8 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
     if (!isNumeric(value)) return widget.invalidNumberMessage;
 
     if (!widget.disableLengthCheck) {
-      final isValidLength = value.length >= _selectedCountry.minLength &&
+      final isValidLength =
+          value.length >= _selectedCountry.minLength &&
           value.length <= _selectedCountry.maxLength;
       if (!isValidLength) return widget.invalidNumberMessage;
     }
@@ -402,7 +404,8 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
       textAlignVertical: widget.textAlignVertical,
       cursorColor: widget.cursorColor,
       onTap: widget.onTap,
-      onTapOutside: widget.onTapOutside ??
+      onTapOutside:
+          widget.onTapOutside ??
           (_) => FocusManager.instance.primaryFocus?.unfocus(),
       controller: widget.controller,
       focusNode: widget.focusNode,
@@ -486,8 +489,8 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
       maxLength: widget.disableLengthCounter
           ? null
           : hasCodeInText
-              ? (_selectedCountry.maxLength + _selectedCountryDialCode.length)
-              : _selectedCountry.maxLength,
+          ? (_selectedCountry.maxLength + _selectedCountryDialCode.length)
+          : _selectedCountry.maxLength,
       keyboardType: widget.keyboardType,
       inputFormatters: widget.inputFormatters,
       enabled: widget.enabled,
@@ -496,18 +499,26 @@ class _IntlMobileFieldState extends State<IntlMobileField> {
       textInputAction: widget.textInputAction,
       autovalidateMode: widget.autovalidateMode,
       scrollPadding: widget.scrollPadding,
-      buildCounter: (BuildContext context,
-          {int? currentLength, int? maxLength, bool? isFocused}) {
-        final ft = widget.controller?.text ?? widget.initialValue ?? '';
-        final numberLength = _stripCountryCode(ft, _selectedCountry).length;
-        final maxNumberLength =
-            widget.disableLengthCounter ? 0 : _selectedCountry.maxLength;
+      buildCounter:
+          (
+            BuildContext context, {
+            int? currentLength,
+            int? maxLength,
+            bool? isFocused,
+          }) {
+            final ft = widget.controller?.text ?? widget.initialValue ?? '';
+            final numberLength = _stripCountryCode(ft, _selectedCountry).length;
+            final maxNumberLength = widget.disableLengthCounter
+                ? 0
+                : _selectedCountry.maxLength;
 
-        return Text(
-          widget.disableLengthCounter ? "" : '$numberLength / $maxNumberLength',
-          style: widget.lengthCounterTextStyle,
-        );
-      },
+            return Text(
+              widget.disableLengthCounter
+                  ? ""
+                  : '$numberLength / $maxNumberLength',
+              style: widget.lengthCounterTextStyle,
+            );
+          },
     );
   }
 }
